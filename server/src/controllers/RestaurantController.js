@@ -27,7 +27,7 @@ export async function addRestaurantMenus(request, response) {
     try {
         const connection = getConnectionObject();
         const { menu_id, item_name, description, price, image_url, quantity, category, restaurant_id } = request.body;
-        const qry = `insert into menus (menu_id, item_name, description, price, image_url, quantity, category, restaurant_id) values(${menu_id},'${item_name}', '${description}', ${price}, '${image_url}', ${quantity}, '${category}', ${restaurant_id})`;
+        const qry = `insert into menus (item_name, description, price, image_url, quantity, category, restaurant_id) values('${item_name}', '${description}', ${price}, '${image_url}', ${quantity}, '${category}', ${restaurant_id})`;
         const [resultSet] = await connection.query(qry);
         if (resultSet.affectedRows === 1) {
             response.send({ message: "Menu added successfully" });
@@ -35,6 +35,7 @@ export async function addRestaurantMenus(request, response) {
             response.send({ message: "Adding menu failed" });
         }
     } catch (error) {
+        console.log(error);
         response.status(500).send({ message: "Something went wrong" });
     }
 }
