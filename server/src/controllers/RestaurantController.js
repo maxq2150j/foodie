@@ -4,10 +4,11 @@ import { hashSync } from "bcrypt";
 export async function registerRestaurant(request, response) {
     try {
         const connection = getConnectionObject();
-        const { restaurant_id, name, email, password, phone, address, description } = request.body;
-        const encryptedPassword = hashSync(password, 12);
-        const qry = `insert into restaurants (restaurant_id, name, email, password, phone, address, description) values(${restaurant_id},'${name}', '${email}', '${encryptedPassword}', '${phone}', '${address}', '${description}')`;
-        const [resultSet] = await connection.query(qry);
+    const { name, email, password, phone, address, description } = request.body;
+    const encryptedPassword = hashSync(password, 12);
+    const { restaurant_id } = request.body;
+    const qry = `insert into restaurants (restaurant_id, name, email, password, phone, address, description) values(?, ?, ?, ?, ?, ?)`;
+    const [resultSet] = await connection.query(qry, [restaurant_id, name, email, encryptedPassword, phone, address, description]);
         if (resultSet.affectedRows === 1) {
             response.send({ message: "Restaurant registered successfully" });
         } else {
@@ -101,6 +102,8 @@ export async function deleteItemById(request, response) {
         }
     } catch (error) {
         console.log(error);
+        // send an error response so the client doesn't hang
+        response.status(500).send({ message: "Something went wrong while deleting the menu" });
     }
 }
 
@@ -127,7 +130,7 @@ export async function searchMenusAndRestaurants(request, response) {
                 r.address AS restaurant_address
             FROM menus m
             JOIN restaurants r ON m.restaurant_id = r.restaurant_id
-            WHERE m.item_name LIKE '%${query}%' OR r.name LIKE '%${query}%'
+            WHERE m.item_name LIKE ? OR r.name LIKE ?
         `;
 
         const searchValue = `%${query}%`;
