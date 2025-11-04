@@ -1,9 +1,19 @@
 import { FaSearch } from "react-icons/fa";
 import { Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export function Navigationbar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        try {
+            localStorage.removeItem('auth');
+        } catch (e) {
+            // ignore
+        }
+        navigate('/login');
+    };
     return (
         <nav className="navbar navbar-expand-lg bg-white shadow-sm py-3 px-4">
             <div className="container-fluid">
@@ -37,9 +47,9 @@ export function Navigationbar() {
                             <Nav.Link className="text-secondary">About Us</Nav.Link>
                         </LinkContainer>
 
-                        <LinkContainer to="/students-list">
-                            <Nav.Link className="text-secondary">Log out</Nav.Link>
-                        </LinkContainer>
+                        <Nav.Link className="text-secondary" style={{ cursor: 'pointer' }} onClick={handleLogout}>
+                            Log out
+                        </Nav.Link>
 
                         <LinkContainer to="/students-list">
                             <Nav.Link className="text-secondary" >Cart</Nav.Link>
