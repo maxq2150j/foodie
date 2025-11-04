@@ -3,6 +3,7 @@ import { Navigationbar } from "./components/Navigationbar.jsx";
 import { Home } from "./components/Home.jsx";
 import RestaurantHomePage from "./components/RestaurantHomePage.jsx";
 import AddMenuForm from "./components/AddMenuForm.jsx";
+import DisplayAllMenus from "./components/DisplayAllMenus.jsx";
 
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
       <Navigationbar />
       <Routes>
         <Route path="/" element={<RestaurantHomePage />} />
-        <Route path="/addMenus" element={<AddMenuForm />} />
+        <Route path="/displayMenus" element={<DisplayAllMenus />} />
+        <Route path="/addMenu" element={<AddMenuForm />} />
       </Routes>
     </BrowserRouter>
   )
