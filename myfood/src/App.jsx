@@ -19,6 +19,7 @@ function RequireAuth({ children }) {
     return <Navigate to="/login" replace />;
   }
 }
+import DisplayAllMenus from "./components/DisplayAllMenus.jsx";
 
 
 function App() {
@@ -61,6 +62,9 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/" element={<RestaurantHomePage />} />
+        <Route path="/displayMenus" element={<DisplayAllMenus />} />
+        <Route path="/addMenu" element={<AddMenuForm />} />
       </Routes>
 
       {/* Helper to protect routes */}

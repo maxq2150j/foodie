@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { addMenu } from "../services/RestaurantService";
 
 
 export default function AddMenuForm() {
@@ -16,18 +17,19 @@ export default function AddMenuForm() {
         restaurant_id: "",
     });
 
-    const handleChange = (e) => {
-        setMenu({ ...menu, [e.target.name]: e.target.value });
+    const handleChange = (event) => {
+        setMenu({ ...menu, [event.target.name]: event.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:6000/menus", menu);
+            console.log(menu);
+            const response = await addMenu(menu);
             alert(response.data.message);
         } catch (error) {
-            console.error("Error adding menu:", error);
+            console.error(error);
             alert("Something went wrong while adding the menu!");
         }
     };

@@ -7,6 +7,13 @@ import { login } from './src/controllers/LoginController.js';
 
 const app = express();
 app.use(cors());
+import cors from "cors";
+
+
+
+const app = express();
+app.use(cors());
+
 app.use(express.json());
 
 // Better JSON parse error handling: return JSON instead of HTML on bad JSON
@@ -47,5 +54,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
+app.listen(5000, () => {
     connectDb();
 });
