@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Navigationbar } from "./components/Navigationbar.jsx";
 import { Home } from "./components/Home.jsx";
+import RestaurantHomePage from "./components/RestaurantHomePage.jsx";
+import AddMenuForm from "./components/AddMenuForm.jsx";
 
 
 function App() {
@@ -9,7 +11,8 @@ function App() {
     <BrowserRouter>
       <Navigationbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RestaurantHomePage />} />
+        <Route path="/addMenus" element={<AddMenuForm />} />
       </Routes>
     </BrowserRouter>
   )
