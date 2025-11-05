@@ -1,4 +1,4 @@
-export const APT_PORT = 5000;
+export const APT_PORT = 3000;
 export const BASE_URL = `http://localhost:${APT_PORT}`;
 export const MENU_API_URL = `${BASE_URL}/menus`;
 export const RESTAURANT_API_URL = `${BASE_URL}/restaurant`;

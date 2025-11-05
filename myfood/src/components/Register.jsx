@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../constants/APIConstant.js";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -15,7 +16,6 @@ export default function Register() {
   const roles = [
     { id: "user", label: "User" },
     { id: "restaurant", label: "Restaurant" },
-    { id: "admin", label: "Admin" },
   ];
 
   async function handleSubmit(e) {
@@ -26,36 +26,31 @@ export default function Register() {
       return;
     }
 
-    // generate an id for backend inserts (backend currently expects id values)
-    const generatedId = Date.now();
-
     try {
       let res;
       if (selectedRole === "restaurant") {
         const payload = {
-          restaurant_id: generatedId,
           name,
           email,
           password,
           phone,
-          address,
-          description,
+          address: address || "",
+          description: description || "",
         };
-        res = await fetch("http://localhost:3000/restaurant", {
+        res = await fetch(`${BASE_URL}/restaurant`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
       } else {
         const payload = {
-          user_id: generatedId,
           name,
           email,
           password,
           phone,
-          address,
+          address: address || "",
         };
-        res = await fetch("http://localhost:3000/user", {
+        res = await fetch(`${BASE_URL}/user`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -64,28 +59,15 @@ export default function Register() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "Registration failed");
+        const errorMsg = data.message || data.error || "Registration failed";
+        console.error("Registration error:", data);
+        alert(errorMsg + (data.error ? `\nError: ${data.error}` : ""));
         return;
       }
 
-      // after successful registration, immediately attempt login to obtain token
-      const loginRes = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password, role: selectedRole }),
-      });
-
-      const loginData = await loginRes.json();
-      if (loginRes.ok) {
-        const auth = { authenticated: true, role: selectedRole, phone, token: loginData.token };
-        localStorage.setItem("auth", JSON.stringify(auth));
-        if (selectedRole === "restaurant") navigate("/restaurant-home");
-        else navigate("/");
-      } else {
-        // if login fails after registration, still navigate to login page
-        alert("Registered successfully. Please login.");
-        navigate("/login");
-      }
+      // After successful registration, redirect to login page
+      alert("Registration successful! Please login to continue.");
+      navigate("/login");
     } catch (err) {
       console.error(err);
       alert("Unable to reach server");
