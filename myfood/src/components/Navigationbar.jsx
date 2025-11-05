@@ -6,14 +6,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 export function Navigationbar() {
     const navigate = useNavigate();
+    const auth = JSON.parse(localStorage.getItem("auth") || "{}");
+    const role = auth.role || "user";
+    
     const handleLogout = () => {
         try {
             localStorage.removeItem('auth');
+            localStorage.removeItem('cart');
         } catch (e) {
             // ignore
         }
         navigate('/login');
     };
+    
     return (
         <nav className="navbar navbar-expand-lg bg-white shadow-sm py-3 px-4">
             <div className="container-fluid">
@@ -35,25 +40,48 @@ export function Navigationbar() {
                 </div>
                 <div>
                     <Nav className="me-auto">
-                        <LinkContainer to="/">
-                            <Nav.Link className="text-secondary">Home</Nav.Link>
-                        </LinkContainer>
-
-                        <LinkContainer to="/register-student">
-                            <Nav.Link className="text-secondary">Contact</Nav.Link>
-                        </LinkContainer>
-
-                        <LinkContainer to="/students-list">
-                            <Nav.Link className="text-secondary">About Us</Nav.Link>
-                        </LinkContainer>
-
+                        {role === "user" && (
+                            <>
+                                <LinkContainer to="/">
+                                    <Nav.Link className="text-secondary">Home</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/cart">
+                                    <Nav.Link className="text-secondary">Cart</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/about-us">
+                                    <Nav.Link className="text-secondary">About Us</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/contact-us">
+                                    <Nav.Link className="text-secondary">Contact Us</Nav.Link>
+                                </LinkContainer>
+                            </>
+                        )}
+                        {role === "restaurant" && (
+                            <>
+                                <LinkContainer to="/restaurant-home">
+                                    <Nav.Link className="text-secondary">Home</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/restaurant-dashboard">
+                                    <Nav.Link className="text-secondary">Dashboard</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/addMenus">
+                                    <Nav.Link className="text-secondary">Add Menu</Nav.Link>
+                                </LinkContainer>
+                                <LinkContainer to="/displayMenus">
+                                    <Nav.Link className="text-secondary">View Menus</Nav.Link>
+                                </LinkContainer>
+                            </>
+                        )}
+                        {role === "admin" && (
+                            <>
+                                <LinkContainer to="/admin-dashboard">
+                                    <Nav.Link className="text-secondary">Dashboard</Nav.Link>
+                                </LinkContainer>
+                            </>
+                        )}
                         <Nav.Link className="text-secondary" style={{ cursor: 'pointer' }} onClick={handleLogout}>
-                            Log out
+                            Logout
                         </Nav.Link>
-
-                        <LinkContainer to="/students-list">
-                            <Nav.Link className="text-secondary" >Cart</Nav.Link>
-                        </LinkContainer>
                     </Nav>
                 </div>
             </div>

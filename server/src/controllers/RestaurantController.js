@@ -3,23 +3,73 @@ import { hashSync } from "bcrypt";
 
 export async function registerRestaurant(request, response) {
     try {
+        console.log('=== Restaurant Registration Request ===');
+        console.log('Request body:', JSON.stringify(request.body, null, 2));
+        
         const connection = getConnectionObject();
-    const { name, email, password, phone, address, description } = request.body;
-    const encryptedPassword = hashSync(password, 12);
-    const { restaurant_id } = request.body;
-    const qry = `insert into restaurants (restaurant_id, name, email, password, phone, address, description) values(?, ?, ?, ?, ?, ?)`;
-    const [resultSet] = await connection.query(qry, [restaurant_id, name, email, encryptedPassword, phone, address, description]);
+        if (!connection) {
+            console.error('Database connection is null');
+            return response.status(500).json({ message: "Database connection not available" });
+        }
+        
+        const { name, email, password, phone, address, description, restaurant_id } = request.body;
+        
+        console.log('Extracted fields:', { name, email, phone, hasPassword: !!password, address, description, restaurant_id });
+        
+        if (!name || !email || !password || !phone) {
+            console.error('Missing required fields');
+            return response.status(400).json({ message: "Name, email, password, and phone are required" });
+        }
+        
+        const encryptedPassword = hashSync(password, 12);
+        console.log('Password encrypted successfully');
+        
+        // Use the query without restaurant_id to let database auto-generate
+        // Make sure address and description are handled as empty strings if not provided
+        const qry = `INSERT INTO restaurants (name, email, password, phone, address, description) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [
+            name, 
+            email, 
+            encryptedPassword, 
+            phone, 
+            address || '', 
+            description || ''
+        ];
+        
+        console.log('Executing query:', qry);
+        console.log('With params:', params.map((p, i) => i === 2 ? '[PASSWORD_HIDDEN]' : p));
+        
+        const [resultSet] = await connection.query(qry, params);
+        
+        console.log('Query result:', resultSet);
+        
         if (resultSet.affectedRows === 1) {
-            response.send({ message: "Restaurant registered successfully" });
+            console.log('Restaurant registered successfully');
+            response.status(200).json({ message: "Restaurant registered successfully" });
         } else {
-            response.send({ message: "restaurant registration failed" });
+            console.error('Registration failed - no rows affected');
+            response.status(500).json({ message: "Restaurant registration failed" });
         }
     } catch (error) {
-        console.log(error);
+        console.error('=== ERROR in registerRestaurant ===');
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Error errno:', error.errno);
+        console.error('Error sqlMessage:', error.sqlMessage);
+        console.error('Full error:', error);
+        
         if (error.errno === 1062) {
-            response.status(500).send({ message: "Restaurant with this email or id already exists" });
+            response.status(400).json({ message: "Restaurant with this email or id already exists" });
+        } else if (error.code === 'ER_NO_SUCH_TABLE') {
+            response.status(500).json({ message: "Database table 'restaurants' does not exist. Please create it first." });
         } else {
-            response.status(500).send({ message: "Something went wrong" });
+            response.status(500).json({ 
+                message: "Something went wrong", 
+                error: error.message,
+                code: error.code,
+                errno: error.errno
+            });
         }
     }
 }
@@ -43,17 +93,25 @@ export async function addRestaurantMenus(request, response) {
 
 export async function getAllItems(request, response) {
     try {
+        console.log('getAllItems called');
         const connection = getConnectionObject();
-        const data = request.body;
-        const qry = `select * from menus`;
-        const [rows] = await connection.query(qry);
-        if (rows.length === 0) {
-            response.status(400).send({ message: "Menus not exists" });
-        } else {
-            response.status(200).send(rows);
+        if (!connection) {
+            console.error('Database connection is null');
+            return response.status(500).json({ message: "Database connection not available" });
         }
+        console.log('Executing query: SELECT * FROM menus');
+        const qry = `SELECT * FROM menus`;
+        const [rows] = await connection.query(qry);
+        console.log(`Found ${rows.length} menus`);
+        return response.status(200).json(rows);
     } catch (error) {
-        response.status(500).send({ message: "Something went wrong" });
+        console.error('Error in getAllItems:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        if (error.code === 'ER_NO_SUCH_TABLE') {
+            return response.status(200).json([]);
+        }
+        return response.status(500).json({ message: "Something went wrong", error: error.message });
     }
 }
 
@@ -154,5 +212,22 @@ export async function searchMenusAndRestaurants(request, response) {
             message: "Something went wrong during search",
             error: error.message
         });
+    }
+}
+
+export async function getRestaurantById(request, response) {
+    try {
+        const connection = getConnectionObject();
+        const { restaurant_id } = request.params;
+        const qry = `SELECT restaurant_id, name, email, phone, address, description FROM restaurants WHERE restaurant_id = ?`;
+        const [rows] = await connection.query(qry, [restaurant_id]);
+        if (rows.length === 0) {
+            response.status(404).send({ message: "Restaurant not found" });
+        } else {
+            response.status(200).send(rows[0]);
+        }
+    } catch (error) {
+        console.log(error);
+        response.status(500).send({ message: "Something went wrong" });
     }
 }

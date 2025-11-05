@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../constants/APIConstant.js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function Login() {
     }
     // POST to backend login endpoint
     try {
-      const res = await fetch("http://localhost:3000/login", {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password, role: selectedRole }),
@@ -32,10 +33,18 @@ export default function Login() {
 
       const data = await res.json();
       if (res.ok) {
-        const auth = { authenticated: true, role: selectedRole, phone, token: data.token };
+        const auth = { 
+          authenticated: true, 
+          role: selectedRole, 
+          phone, 
+          token: data.token,
+          user_id: data.userId,
+          restaurant_id: data.restaurant_id || null
+        };
         localStorage.setItem("auth", JSON.stringify(auth));
         if (selectedRole === "user") navigate("/");
-        else if (selectedRole === "restaurant") navigate("/restaurant-home");
+        else if (selectedRole === "restaurant") navigate("/restaurant-dashboard");
+        else if (selectedRole === "admin") navigate("/admin-dashboard");
         else navigate("/");
       } else {
         alert(data.message || "Login failed");

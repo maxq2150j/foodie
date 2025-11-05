@@ -1,22 +1,60 @@
 import { compareSync } from "bcrypt";
 import { getConnectionObject } from "../configs/DbConfig.js";
 import { ROLES } from "../constants/RoleConstants.js";
+import { ADMIN_CREDENTIALS } from "../configs/AdminConfig.js";
 import jwt from 'jsonwebtoken';
 
 export async function login(request, response) {
     try {
-        const connection = getConnectionObject();
+        console.log('=== Login Request ===');
+        console.log('Role:', request.body.role);
+        console.log('Identifier:', request.body.phone || request.body.email);
+        
         const { phone, email, password, role } = request.body;
         const identifier = (email || phone || '').trim();
+        
+        // Handle admin login with fixed credentials (no database lookup)
+        if (role === ROLES.ADMIN) {
+            console.log('Admin login attempt');
+            if ((identifier === ADMIN_CREDENTIALS.phone || identifier === ADMIN_CREDENTIALS.email) && 
+                password === ADMIN_CREDENTIALS.password) {
+                const token = jwt.sign({
+                    userId: 'admin',
+                    role: ROLES.ADMIN
+                }, 'user1234');
+                
+                console.log('Admin login successful');
+                return response.status(200).send({
+                    token,
+                    message: 'Admin login successful',
+                    userId: 'admin',
+                    role: ROLES.ADMIN,
+                    name: ADMIN_CREDENTIALS.name
+                });
+            } else {
+                console.log('Admin login failed - invalid credentials');
+                return response.status(400).send({ message: "Invalid admin credentials" });
+            }
+        }
+        
+        // Handle regular user/restaurant login
+        const connection = getConnectionObject();
         // normalize role so both 'user' and 'users' map to the users table
-        const tableName = role === ROLES.ADMIN
-            ? 'admin'
-            : (role === ROLES.USER || role === 'users')
-                ? 'users'
-                : 'restaurants';
+        const tableName = (role === ROLES.USER || role === 'users')
+            ? 'users'
+            : 'restaurants';
+        
+        console.log('Table name:', tableName);
+        
         // search by phone OR email so login accepts either
         const qry = `SELECT * FROM ${tableName} WHERE phone='${identifier}' OR email='${identifier}'`;
         const [rows] = await connection.query(qry);
+        
+        console.log('Found rows:', rows.length);
+        if (rows.length > 0) {
+            console.log('User data:', { ...rows[0], password: '[HIDDEN]' });
+        }
+        
         if (rows.length === 0) {
             response.status(400).send({ message: "Login failed, phone doesn't exist" });
         }
@@ -27,7 +65,18 @@ export async function login(request, response) {
                     userId,
                     role: role
                 }, 'user1234');
-                response.status(200).send({token,message:'Login successful'});
+                const responseData = {
+                    token,
+                    message: 'Login successful',
+                    userId: userId,
+                    role: role
+                };
+                if (role === ROLES.RESTAURANT) {
+                    responseData.restaurant_id = rows[0].restaurant_id;
+                }
+                
+                console.log('Login response data:', responseData);
+                response.status(200).send(responseData);
             }
             else{
                 response.status(400).send({ message: "Login failed, password is invalid" });
