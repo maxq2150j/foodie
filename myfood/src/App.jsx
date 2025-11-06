@@ -11,7 +11,8 @@ import Register from "./components/Register.jsx";
 import DisplayAllMenus from "./components/DisplayAllMenus.jsx";
 import AboutUs from "./components/AboutUs.jsx";
 import ContactUs from "./components/ContactUs.jsx";
-import React from "react";
+
+
 
 function RequireAuth({ children }) {
   // simple client-side guard using localStorage
@@ -124,7 +125,7 @@ function App() {
       </Routes>
 
       {/* Helper to protect routes */}
-      
+
     </BrowserRouter>
   )
 }

@@ -9,7 +9,7 @@ export async function connectDb() {
             user: 'root',
             password: 'cdac',
             port: 3306,
-            database: 'myfood'
+            database: 'myfoodie'
         });
         console.log("Database connected successfully");
 

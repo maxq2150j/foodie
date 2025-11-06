@@ -19,9 +19,9 @@ export default function AboutUs() {
                                 <Card.Body className="p-4">
                                     <h3 className="text-primary mb-3">Our Mission</h3>
                                     <p className="text-muted">
-                                        At FoodPort, we believe that great food should be accessible to everyone, 
-                                        delivered right to your doorstep. We connect food lovers with the best 
-                                        restaurants in town, making it easy to enjoy your favorite meals from 
+                                        At FoodPort, we believe that great food should be accessible to everyone,
+                                        delivered right to your doorstep. We connect food lovers with the best
+                                        restaurants in town, making it easy to enjoy your favorite meals from
                                         the comfort of your home.
                                     </p>
                                 </Card.Body>
@@ -32,8 +32,8 @@ export default function AboutUs() {
                                 <Card.Body className="p-4">
                                     <h3 className="text-success mb-3">Our Vision</h3>
                                     <p className="text-muted">
-                                        To become the leading food delivery platform that brings communities 
-                                        together through the joy of great food. We strive to support local 
+                                        To become the leading food delivery platform that brings communities
+                                        together through the joy of great food. We strive to support local
                                         restaurants while providing exceptional service to our customers.
                                     </p>
                                 </Card.Body>
@@ -86,19 +86,66 @@ export default function AboutUs() {
                                 <Card.Body className="p-4">
                                     <h3 className="text-primary mb-3">Our Story</h3>
                                     <p className="text-muted">
-                                        FoodPort was founded with a simple idea: making great food accessible to everyone. 
-                                        Since our launch, we've been committed to connecting customers with local restaurants, 
+                                        FoodPort was founded with a simple idea: making great food accessible to everyone.
+                                        Since our launch, we've been committed to connecting customers with local restaurants,
                                         creating a seamless ordering experience, and supporting the food industry.
                                     </p>
                                     <p className="text-muted">
-                                        Today, we're proud to serve thousands of customers and work with hundreds of 
-                                        restaurants, continuously improving our platform to provide the best food delivery 
+                                        Today, we're proud to serve thousands of customers and work with hundreds of
+                                        restaurants, continuously improving our platform to provide the best food delivery
                                         experience possible.
                                     </p>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
+                </Col>
+            </Row>
+            <Row className="g-4  justify-content-center p-5" style={{ marginLeft: "80px" }}>
+
+                <Col md={4} sm={6}>
+                    <Card className="team-card  text-center p-3" style={{ width: "15rem" }}>
+                        <div className="team-photo   mb-3">
+                            <img
+                                src={"src/assets/SK.jpg"}
+
+                                className="rounded-circle img-fluid"
+                            />
+                        </div>
+                        <h5 className="fw-bold text-dark">Sanket Kulkarni</h5>
+
+                    </Card>
+                </Col>
+
+
+                <Col md={4} sm={6}>
+                    <Card className="team-card  text-center p-3" style={{ width: "15rem" }}>
+                        <div className="team-photo  mb-3">
+                            <img
+                                src={"src/assets/IG.jpg"}
+
+                                className="rounded-circle img-fluid"
+                            />
+                        </div>
+                        <h5 className="fw-bold text-dark">Isha Gulhane</h5>
+
+
+                    </Card>
+                </Col>
+
+
+                <Col md={4} sm={6}>
+                    <Card className="team-card  text-center p-3" style={{ width: "15rem" }}>
+                        <div className="team-photo  mb-3">
+                            <img
+                                src={"src/assets/SV.png"}
+
+                                className="rounded-circle img-fluid"
+                            />
+                        </div>
+                        <h5 className="fw-bold text-dark">Saurabh Vaidya</h5>
+
+                    </Card>
                 </Col>
             </Row>
         </Container>

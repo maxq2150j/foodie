@@ -14,10 +14,14 @@ export function getMenuByRestaurantId(restaurantId) {
     return axios.get(`${MENU_API_URL}/${restaurantId}`);
 }
 
-export function deleteMune(menuId) {
+export function deleteMenu(menuId) {
     return axios.delete(`${MENU_API_URL}/${menuId}`);
 }
 
 export function updateMenu(menuId, menuData) {
     return axios.put(`${MENU_API_URL}/${menuId}`, menuData);
+}
+
+export function search() {
+    return axios.get(`${SEARCH_API_URL}`);
 }

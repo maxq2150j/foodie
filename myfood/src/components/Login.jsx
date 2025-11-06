@@ -5,7 +5,7 @@ import { BASE_URL } from "../constants/APIConstant.js";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState("user");
 
@@ -19,8 +19,8 @@ export default function Login() {
     e.preventDefault();
 
     // Simple client-side validation
-    if (!phone || !password) {
-      alert("Please enter phone and password");
+    if (!email || !password) {
+      alert("Please enter email and password");
       return;
     }
     // POST to backend login endpoint
@@ -28,15 +28,14 @@ export default function Login() {
       const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password, role: selectedRole }),
+        body: JSON.stringify({ email, password, role: selectedRole }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        const auth = { 
-          authenticated: true, 
-          role: selectedRole, 
-          phone, 
+        const auth = {
+          authenticated: true,
+          role: selectedRole,
           token: data.token,
           user_id: data.userId,
           restaurant_id: data.restaurant_id || null
@@ -65,12 +64,12 @@ export default function Login() {
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formPhone">
-                  <Form.Label>Phone</Form.Label>
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
-                    type="tel"
-                    placeholder="Enter phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    type="email"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Group>
 

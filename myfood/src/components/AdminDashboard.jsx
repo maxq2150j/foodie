@@ -14,7 +14,7 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            // Fetch counts
+
             const usersCountRes = await fetch(`${BASE_URL}/admin/users/count`);
             const usersCountData = await usersCountRes.json();
             setUsersCount(usersCountData.count);
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
             const restaurantsCountData = await restaurantsCountRes.json();
             setRestaurantsCount(restaurantsCountData.count);
 
-            // Fetch lists
+
             const usersListRes = await fetch(`${BASE_URL}/admin/users`);
             const usersListData = await usersListRes.json();
             setUsersList(usersListData);
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     return (
         <Container className="mt-5">
             <h2 className="text-center mb-4 text-danger">Admin Dashboard</h2>
-            
+
             <Row className="mb-4">
                 <Col md={6}>
                     <Card className="text-center shadow-sm">

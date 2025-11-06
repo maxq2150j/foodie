@@ -8,7 +8,7 @@ function RestaurantHomePage() {
         <div >
 
 
-            {/* ===== Hero Section ===== */}
+
             <div style={{ maxWidth: "1200px", margin: "40px auto", padding: "0 20px" }}>
                 <div
                     style={{
@@ -21,7 +21,7 @@ function RestaurantHomePage() {
                         overflow: "hidden",
                     }}
                 >
-                    {/* Left - Image */}
+
                     <div style={{ flex: 1 }}>
                         <img
                             src={heroImage}
@@ -35,7 +35,6 @@ function RestaurantHomePage() {
                         />
                     </div>
 
-                    {/* Right - Text */}
                     <div style={{ flex: 1, padding: "40px" }}>
                         <h1
                             style={{
@@ -54,7 +53,7 @@ function RestaurantHomePage() {
                             Create an attractive online menu, impress food lovers, and grow your business with style.
                         </p>
 
-                        {/* Action Buttons */}
+
                         <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
                             <button
                                 style={{
@@ -114,7 +113,7 @@ function RestaurantHomePage() {
                 </div>
             </div>
 
-            {/* ===== Footer ===== */}
+
             <footer
                 style={{
                     backgroundColor: "#1d3557",

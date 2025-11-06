@@ -3,18 +3,32 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { getAllMenus } from "../services/RestaurantService.js";
 import { BASE_URL } from "../constants/APIConstant.js";
 
+
+
 export function Home() {
-    const [menusByRestaurant, setMenusByRestaurant] = useState({});
+    const [menus, setMenus] = useState([]);
     const [restaurants, setRestaurants] = useState([]);
+    const [menusByRestaurant, setMenusByRestaurant] = useState({});
+
+
 
     useEffect(() => {
         fetchMenus();
     }, []);
 
+
+
+
+
+    const grouped = {};
+    const restaurantSet = new Set();
+
+
+
     const fetchMenus = async () => {
         try {
             const response = await getAllMenus();
-            
+
             // Check if response is successful
             if (response.status !== 200) {
                 console.error("Failed to fetch menus:", response.status);
@@ -22,7 +36,7 @@ export function Home() {
                 setRestaurants([]);
                 return;
             }
-            
+
             const menus = response.data || [];
 
             // If no menus, set empty state
@@ -57,9 +71,9 @@ export function Home() {
                 }
                 // Fallback: try to get restaurant name from menus
                 const restaurantMenu = menus.find(m => m.restaurant_id === restaurantId);
-                return { 
-                    restaurant_id: restaurantId, 
-                    name: restaurantMenu?.restaurant_name || `Restaurant ${restaurantId}` 
+                return {
+                    restaurant_id: restaurantId,
+                    name: restaurantMenu?.restaurant_name || `Restaurant ${restaurantId}`
                 };
             });
 
@@ -71,10 +85,22 @@ export function Home() {
         }
     };
 
+    const getRestaurantName = (restaurantId) => {
+        const restaurant = restaurants.find((r) => r.restaurant_id === restaurantId);
+        return restaurant ? restaurant.name : `Restaurant ${restaurantId}`;
+    };
+
+    menus.forEach((menu) => {
+        if (!grouped[menu.restaurant_id]) {
+            grouped[menu.restaurant_id] = [];
+            restaurantSet.add(menu.restaurant_id);
+        }
+        grouped[menu.restaurant_id].push(menu);
+    });
+
     const addToCart = (menu, restaurantName) => {
         const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        
-        // Check if item already exists in cart
+
         const existingItemIndex = cart.findIndex(
             (item) => item.menu_id === menu.menu_id && item.restaurant_id === menu.restaurant_id
         );
@@ -97,14 +123,33 @@ export function Home() {
         alert("Item added to cart!");
     };
 
-    const getRestaurantName = (restaurantId) => {
-        const restaurant = restaurants.find((r) => r.restaurant_id === restaurantId);
-        return restaurant ? restaurant.name : `Restaurant ${restaurantId}`;
-    };
-
     return (
-        <Container className="mt-5">
-            <h2 className="text-center mb-4 text-danger">🍽️ Available Menus</h2>
+        <Container className="mt-5 mb-5">
+
+            <div
+                style={{
+                    backgroundImage:
+                        "url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    height: "300px",
+                    borderRadius: "15px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    textAlign: "center",
+                    marginBottom: "60px",
+
+                }}
+            >
+                <h1 className="fw-bold">Are you hungry?</h1>
+                <p className="fs-5">Don’t wait!!! Let’s start ordering food now!</p>
+
+            </div>
+
+            <h2 className="text-center mb-5 text-danger">🍴 Availabel Food</h2>
 
             {Object.keys(menusByRestaurant).length === 0 ? (
                 <div className="text-center p-5">
@@ -118,11 +163,12 @@ export function Home() {
                         </h3>
                         <Row className="g-4">
                             {menusByRestaurant[restaurantId].map((menu) => (
+
                                 <Col key={menu.menu_id} lg={3} md={4} sm={6} xs={12}>
                                     <Card className="h-100 shadow-sm">
                                         <Card.Img
                                             variant="top"
-                                            src={menu.image_url || "https://via.placeholder.com/300"}
+                                            src={menu.image_url}
                                             style={{ height: "200px", objectFit: "cover" }}
                                         />
                                         <Card.Body className="d-flex flex-column">
@@ -151,6 +197,8 @@ export function Home() {
                     </div>
                 ))
             )}
+
         </Container>
     );
+
 }

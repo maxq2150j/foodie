@@ -3,22 +3,29 @@ import { Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect, useState } from "react";
 
 export function Navigationbar() {
     const navigate = useNavigate();
+
     const auth = JSON.parse(localStorage.getItem("auth") || "{}");
     const role = auth.role || "user";
-    
+
+
+
     const handleLogout = () => {
         try {
             localStorage.removeItem('auth');
             localStorage.removeItem('cart');
         } catch (e) {
-            // ignore
+
         }
         navigate('/login');
     };
-    
+
+
+
+
     return (
         <nav className="navbar navbar-expand-lg bg-white shadow-sm py-3 px-4">
             <div className="container-fluid">
@@ -35,6 +42,10 @@ export function Navigationbar() {
                         <input
                             className="form-control border-0 shadow-none"
                             type="search"
+                            placeholder="Search for food..."
+
+
+
                         />
                     </div>
                 </div>
@@ -58,9 +69,7 @@ export function Navigationbar() {
                         )}
                         {role === "restaurant" && (
                             <>
-                                <LinkContainer to="/restaurant-home">
-                                    <Nav.Link className="text-secondary">Home</Nav.Link>
-                                </LinkContainer>
+
                                 <LinkContainer to="/restaurant-dashboard">
                                     <Nav.Link className="text-secondary">Dashboard</Nav.Link>
                                 </LinkContainer>

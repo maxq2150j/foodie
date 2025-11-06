@@ -17,12 +17,12 @@ export default function Cart() {
     useEffect(() => {
         loadCart();
         checkOrderStatus();
-        
-        // Poll for order status updates every 3 seconds
+
+
         const interval = setInterval(() => {
             checkOrderStatus();
         }, 3000);
-        
+
         return () => clearInterval(interval);
     }, []);
 
@@ -38,29 +38,29 @@ export default function Cart() {
 
             const response = await fetch(`${BASE_URL}/orders/user/${auth.user_id}`);
             const orders = await response.json();
-            
+
             if (orders.length > 0) {
                 const latest = orders[0];
                 const previousStatus = orderStatus;
                 const normalizedStatus = latest.status?.toLowerCase();
                 setLatestOrder(latest);
                 setOrderStatus(normalizedStatus);
-                
+
                 // Show notification when status changes to confirmed
                 if (previousStatus === "pending" && normalizedStatus === "confirmed") {
                     setNotification("🎉 Order confirmed! Your food is being prepared.");
                 }
-                
+
                 // Show notification when status changes to delivered
                 if (previousStatus === "confirmed" && normalizedStatus === "delivered") {
                     setNotification("✅ Order has been delivered! Enjoy your meal!");
                     setShowFeedback(true);
                 }
-                
+
                 if (normalizedStatus === "delivered" && !showFeedback) {
                     setShowFeedback(true);
                 }
-                
+
                 // Show notification if order is rejected
                 if (previousStatus === "pending" && normalizedStatus === "rejected") {
                     setNotification("❌ Sorry, your order was rejected by the restaurant.");
@@ -80,7 +80,7 @@ export default function Cart() {
             }
             return item;
         }).filter(Boolean);
-        
+
         setCartItems(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
@@ -124,7 +124,7 @@ export default function Cart() {
             // Create orders for each restaurant
             for (const [restaurantId, items] of Object.entries(restaurantGroups)) {
                 const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-                
+
                 const orderData = {
                     user_id: auth.user_id,
                     restaurant_id: parseInt(restaurantId),
@@ -289,7 +289,7 @@ export default function Cart() {
                                 <p><strong>Order ID:</strong> {latestOrder.order_id}</p>
                                 <p><strong>Restaurant:</strong> {latestOrder.restaurant_name}</p>
                                 <p><strong>Total Amount:</strong> ₹{latestOrder.total_amount}</p>
-                                <p><strong>Status:</strong> 
+                                <p><strong>Status:</strong>
                                     {orderStatus === "pending" && (
                                         <span className="badge bg-warning text-dark ms-2">
                                             Pending - Waiting for restaurant confirmation

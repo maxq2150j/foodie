@@ -6,23 +6,19 @@ import jwt from 'jsonwebtoken';
 
 export async function login(request, response) {
     try {
-        console.log('=== Login Request ===');
-        console.log('Role:', request.body.role);
-        console.log('Identifier:', request.body.phone || request.body.email);
-        
-        const { phone, email, password, role } = request.body;
-        const identifier = (email || phone || '').trim();
-        
-        // Handle admin login with fixed credentials (no database lookup)
+
+        const { email, password, role } = request.body;
+        const identifier = (email || '').trim();
+
         if (role === ROLES.ADMIN) {
             console.log('Admin login attempt');
-            if ((identifier === ADMIN_CREDENTIALS.phone || identifier === ADMIN_CREDENTIALS.email) && 
+            if ((identifier === ADMIN_CREDENTIALS.email) &&
                 password === ADMIN_CREDENTIALS.password) {
                 const token = jwt.sign({
                     userId: 'admin',
                     role: ROLES.ADMIN
                 }, 'user1234');
-                
+
                 console.log('Admin login successful');
                 return response.status(200).send({
                     token,
@@ -36,30 +32,29 @@ export async function login(request, response) {
                 return response.status(400).send({ message: "Invalid admin credentials" });
             }
         }
-        
-        // Handle regular user/restaurant login
+
+
         const connection = getConnectionObject();
-        // normalize role so both 'user' and 'users' map to the users table
+
         const tableName = (role === ROLES.USER || role === 'users')
             ? 'users'
             : 'restaurants';
-        
+
         console.log('Table name:', tableName);
-        
-        // search by phone OR email so login accepts either
+
         const qry = `SELECT * FROM ${tableName} WHERE phone='${identifier}' OR email='${identifier}'`;
         const [rows] = await connection.query(qry);
-        
+
         console.log('Found rows:', rows.length);
         if (rows.length > 0) {
             console.log('User data:', { ...rows[0], password: '[HIDDEN]' });
         }
-        
+
         if (rows.length === 0) {
-            response.status(400).send({ message: "Login failed, phone doesn't exist" });
+            response.status(400).send({ message: "Login failed, email doesn't exist" });
         }
         else {
-            if(compareSync(password,rows[0].password)){
+            if (compareSync(password, rows[0].password)) {
                 const userId = rows[0].id || rows[0].user_id || rows[0].restaurant_id || null;
                 const token = jwt.sign({
                     userId,
@@ -74,14 +69,14 @@ export async function login(request, response) {
                 if (role === ROLES.RESTAURANT) {
                     responseData.restaurant_id = rows[0].restaurant_id;
                 }
-                
+
                 console.log('Login response data:', responseData);
                 response.status(200).send(responseData);
             }
-            else{
+            else {
                 response.status(400).send({ message: "Login failed, password is invalid" });
             }
-        
+
         }
     } catch (error) {
         console.log(error);

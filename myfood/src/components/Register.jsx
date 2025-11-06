@@ -65,7 +65,7 @@ export default function Register() {
         return;
       }
 
-      // After successful registration, redirect to login page
+
       alert("Registration successful! Please login to continue.");
       navigate("/login");
     } catch (err) {

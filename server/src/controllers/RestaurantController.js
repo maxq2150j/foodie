@@ -3,46 +3,41 @@ import { hashSync } from "bcrypt";
 
 export async function registerRestaurant(request, response) {
     try {
-        console.log('=== Restaurant Registration Request ===');
-        console.log('Request body:', JSON.stringify(request.body, null, 2));
-        
+
         const connection = getConnectionObject();
         if (!connection) {
             console.error('Database connection is null');
             return response.status(500).json({ message: "Database connection not available" });
         }
-        
+
         const { name, email, password, phone, address, description, restaurant_id } = request.body;
-        
+
         console.log('Extracted fields:', { name, email, phone, hasPassword: !!password, address, description, restaurant_id });
-        
+
         if (!name || !email || !password || !phone) {
             console.error('Missing required fields');
             return response.status(400).json({ message: "Name, email, password, and phone are required" });
         }
-        
+
         const encryptedPassword = hashSync(password, 12);
         console.log('Password encrypted successfully');
-        
-        // Use the query without restaurant_id to let database auto-generate
-        // Make sure address and description are handled as empty strings if not provided
-        const qry = `INSERT INTO restaurants (name, email, password, phone, address, description) VALUES (?, ?, ?, ?, ?, ?)`;
+        const qry = `INSERT INTO restaurants (name, email, password, phone, address, description) VALUES ('${name}', '${email}', '${encryptedPassword}', '${phone}', '${address}', '${description}')`;
         const params = [
-            name, 
-            email, 
-            encryptedPassword, 
-            phone, 
-            address || '', 
+            name,
+            email,
+            encryptedPassword,
+            phone,
+            address || '',
             description || ''
         ];
-        
+
         console.log('Executing query:', qry);
         console.log('With params:', params.map((p, i) => i === 2 ? '[PASSWORD_HIDDEN]' : p));
-        
+
         const [resultSet] = await connection.query(qry, params);
-        
+
         console.log('Query result:', resultSet);
-        
+
         if (resultSet.affectedRows === 1) {
             console.log('Restaurant registered successfully');
             response.status(200).json({ message: "Restaurant registered successfully" });
@@ -58,14 +53,14 @@ export async function registerRestaurant(request, response) {
         console.error('Error errno:', error.errno);
         console.error('Error sqlMessage:', error.sqlMessage);
         console.error('Full error:', error);
-        
+
         if (error.errno === 1062) {
             response.status(400).json({ message: "Restaurant with this email or id already exists" });
         } else if (error.code === 'ER_NO_SUCH_TABLE') {
             response.status(500).json({ message: "Database table 'restaurants' does not exist. Please create it first." });
         } else {
-            response.status(500).json({ 
-                message: "Something went wrong", 
+            response.status(500).json({
+                message: "Something went wrong",
                 error: error.message,
                 code: error.code,
                 errno: error.errno
@@ -160,7 +155,7 @@ export async function deleteItemById(request, response) {
         }
     } catch (error) {
         console.log(error);
-        // send an error response so the client doesn't hang
+
         response.status(500).send({ message: "Something went wrong while deleting the menu" });
     }
 }
