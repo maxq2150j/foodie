@@ -26,6 +26,21 @@ export default function Register() {
       return;
     }
 
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    const passwordRegex = /^(?=.[a-z]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      alert(
+        "Password must be at least 8 characters long and include:\n- One uppercase letter\n- One lowercase letter\n- One number\n- One special character"
+      );
+      return;
+    }
+
     try {
       let res;
       if (selectedRole === "restaurant") {

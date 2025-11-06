@@ -23,6 +23,7 @@ export default function Login() {
       alert("Please enter email and password");
       return;
     }
+
     // POST to backend login endpoint
     try {
       const res = await fetch(`${BASE_URL}/login`, {

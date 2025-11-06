@@ -11,7 +11,7 @@ export default function ContactUs() {
     });
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
-    const [alertVariant, setAlertVariant] = useState("success");
+
 
     const handleChange = (e) => {
         setFormData({
@@ -22,12 +22,11 @@ export default function ContactUs() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Basic validation
         if (!formData.name || !formData.email || !formData.phone || !formData.description) {
-            setAlertMessage("Please fill in all fields");
-            setAlertVariant("danger");
-            setShowAlert(true);
+            alert("Please fill in all fields");
+
             return;
         }
 
@@ -39,12 +38,11 @@ export default function ContactUs() {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
-                setAlertMessage(data.message || "Your message has been received! We will contact you soon.");
-                setAlertVariant("success");
-                setShowAlert(true);
-                // Reset form
+                alert(data.message || "Your message has been received! We will contact you soon.");
+
+
                 setFormData({
                     name: "",
                     email: "",
@@ -54,15 +52,13 @@ export default function ContactUs() {
                 // Hide alert after 5 seconds
                 setTimeout(() => setShowAlert(false), 5000);
             } else {
-                setAlertMessage(data.message || "Failed to send message. Please try again.");
-                setAlertVariant("danger");
-                setShowAlert(true);
+                alert(data.message || "Failed to send message. Please try again.");
+
             }
         } catch (error) {
             console.error("Error submitting contact form:", error);
-            setAlertMessage("Unable to send message. Please try again later.");
-            setAlertVariant("danger");
-            setShowAlert(true);
+            alert("Unable to send message. Please try again later.");
+
         }
     };
 
@@ -149,29 +145,7 @@ export default function ContactUs() {
                         </Card.Body>
                     </Card>
 
-                    <Card className="shadow-sm border-0 mt-4">
-                        <Card.Body className="p-4">
-                            <h4 className="text-primary mb-3">Other Ways to Reach Us</h4>
-                            <Row>
-                                <Col md={6} className="mb-3">
-                                    <h5>📧 Email</h5>
-                                    <p className="text-muted">support@foodport.com</p>
-                                </Col>
-                                <Col md={6} className="mb-3">
-                                    <h5>📞 Phone</h5>
-                                    <p className="text-muted">+1 (555) 123-4567</p>
-                                </Col>
-                                <Col md={12}>
-                                    <h5>📍 Address</h5>
-                                    <p className="text-muted">
-                                        123 Food Street<br />
-                                        City, State 12345<br />
-                                        Country
-                                    </p>
-                                </Col>
-                            </Row>
-                        </Card.Body>
-                    </Card>
+
                 </Col>
             </Row>
         </Container>
